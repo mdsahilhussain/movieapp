@@ -66,6 +66,14 @@
   margin-right: 5vw;
 }
 
+a{
+  text-decoration: none;
+  color: white;
+}
+
+a:hover{
+  color: aqua;
+}
 .movies-list{
   display: flex;
   flex-wrap: wrap;
