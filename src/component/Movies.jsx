@@ -9,6 +9,7 @@ export default class Movies extends Component {
       parr: [1],
       currPage: 1,
       movies: [],
+      favourites: [],
     };
   }
 
@@ -35,7 +36,7 @@ export default class Movies extends Component {
 
   handleRight = () => {
     let temparr = [];
-    for (let i = 1; i < this.state.parr.length + 1; i++) {
+    for (let i = 1; i <= this.state.parr.length + 1; i++) {
       temparr.push(i);
     }
     this.setState(
@@ -48,17 +49,45 @@ export default class Movies extends Component {
   };
 
   handleLeft = () => {
-    let temparr = [];
-    for (let i = 1; i < this.state.parr.length + 1; i++) {
-      temparr.push(i);
+    if (this.state.currPage != 1) {
+      this.setState(
+        {
+          currPage: this.state.currPage - 1,
+        },
+        this.changeMovies
+      );
     }
-    this.setState(
-      {
-        parr: [...temparr],
-        currPage: this.state.currPage - 1,
-      },
-      this.changeMovies
-    );
+  };
+
+  handleClick = (value) => {
+    if (value !== this.state.currPage) {
+      console.log("i am called");
+      this.setState(
+        {
+          currPage: value,
+        },
+        this.changeMovies
+      );
+    }
+  };
+
+  handleFavourites = (movie) => {
+    let oldData = JSON.parse(localStorage.getItem("movies-app") || "[]");
+    if (this.state.favourites.includes(movie.id)) {
+      oldData = oldData.filter((m) => m.id !== movie.id);
+    } else {
+      oldData.push(movie);
+    }
+    localStorage.setItem("movies-app", JSON.stringify(oldData));
+    this.handleFavouritesStates();
+  };
+
+  handleFavouritesStates = () => {
+    let oldData = JSON.parse(localStorage.getItem("movies-app") || "[]");
+    let temp = oldData.map((movie) => movie.id);
+    this.setState({
+      favourites: [...temp],
+    });
   };
 
   render() {
@@ -98,9 +127,13 @@ export default class Movies extends Component {
                     }}
                   >
                     {this.state.hover === movieObj.id && (
-                      <a href="/" className="btn btn-primary movies-button">
-                        Add to Favourit
-                      </a>
+                      <button
+                        className="btn btn-primary movies-button"
+                        type="button"
+                        onClick={() => this.handleFavourites(movieObj)}
+                      >
+                       {this.state.favourites.includes(movieObj.id)?"Remove from favourites":"Add to favourites"}
+                      </button>
                     )}
                   </div>
                   {/* </div> */}
@@ -110,23 +143,26 @@ export default class Movies extends Component {
             <div style={{ display: "flex", justifyContent: "center" }}>
               <nav aria-label="Page navigation example">
                 <ul className="pagination">
-                  <li className="page-item">
-                    <a className="page-link" onClick={this.handleLeft}>
+                  <li className="page-item" style={{ cursor: "pointer" }}>
+                    <button className="page-link" onClick={this.handleLeft}>
                       Previous
-                    </a>
+                    </button>
                   </li>
 
                   {this.state.parr.map((value) => (
-                    <li className="page-item">
-                      <a className="page-link" onClick={() => this.hadle}>
+                    <li class="page-item">
+                      <a
+                        class="page-link"
+                        onClick={() => this.handleClick(value)}
+                      >
                         {value}
                       </a>
                     </li>
                   ))}
-                  <li className="page-item">
-                    <a className="page-link" onClick={this.handleRight}>
+                  <li className="page-item" style={{ cursor: "pointer" }}>
+                    <button className="page-link" onClick={this.handleRight}>
                       Next
-                    </a>
+                    </button>
                   </li>
                 </ul>
               </nav>

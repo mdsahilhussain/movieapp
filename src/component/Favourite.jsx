@@ -5,38 +5,52 @@ export default class Favourite extends Component {
     constructor(){
         super();
         this.state={
-            genres:[]
+            genres:[],
+            currgen:'All Genres',
+            movies:[],
+            currText:'',
+            limit:5,
+            currPage:1
         }
+    }
+
+    componentDidMount(){
+      let genreids = {
+        28: "Action",
+        12: "Adventure",
+        16: "Animation",
+        35: "Comedy",
+        80: "Crime",
+        99: "Documentary",
+        18: "Drama",
+        10751: "Family",
+        14: "Fantasy",
+        36: "History",
+        27: "Horror",
+        10402: "Music",
+        9648: "Mystery",
+        10749: "Romance",
+        878: "Sci-Fi",
+        10770: "TV",
+        53: "Thriller",
+        10752: "War",
+        37: "Western",
+      };
+      let data = JSON.parse(localStorage.getItem("movies-app")|| "[]")  
+      let temp =[];
+      movies.forEach((movieObj)=>{
+          if(!temp.includes(genreids[movieObj.genre_ids[0]]));
+          temp.push(genreids[movieObj.genre_ids[0]]);
+      })
+      temp.unshift('All Genres');
+      this.setState({
+        genreids:[...temp],
+        movies:[...data],
+
+      })
     }
   render() {
     const movie = movies.results;
-    let genreids = {
-      28: "Action",
-      12: "Adventure",
-      16: "Animation",
-      35: "Comedy",
-      80: "Crime",
-      99: "Documentary",
-      18: "Drama",
-      10751: "Family",
-      14: "Fantasy",
-      36: "History",
-      27: "Horror",
-      10402: "Music",
-      9648: "Mystery",
-      10749: "Romance",
-      878: "Sci-Fi",
-      10770: "TV",
-      53: "Thriller",
-      10752: "War",
-      37: "Western",
-    };
-    let temp =[];
-    movie.forEach((movieObj)=>{
-        if(!temp.includes(genreids[movieObj.genre_ids[0]]));
-        temp.push(genreids[movieObj.genre_ids[0]]);
-    })
-    temp.unshift('All Genres')
     console.log(temp)
     return (
       <div>
@@ -48,7 +62,7 @@ export default class Favourite extends Component {
                   {
                     temp.map((genre)=>{
                       return (
-                        this.state.currgen == genre ? <li className="list-group-item" style={{background:"#3f51b5", color:"white", fontWeight:'bold'}}>{genre}</li>:
+                        this.state.currgen === genre ? <li className="list-group-item" style={{background:"#3f51b5", color:"white", fontWeight:'bold'}}>{genre}</li>:
                         <li className="list-group-item" style={{background:"white", color:"#3f51b5"}}>{genre}</li>
                       )
                       })
