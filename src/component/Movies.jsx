@@ -12,28 +12,49 @@ export default class Movies extends Component {
       favourites: [],
     };
   }
-
+  loadMoreMovies = async () => {
+    let newPage = this.state.currPage + 1;
+    const res = await axios.get(
+      `https://api.themoviedb.org/3/movie/popular?api_key=5540e483a20e0b20354dabc2d66a31c9&language=en-US&page=${newPage}`
+    );
+    let data = res.data;
+    // console.log(data);
+    this.setState({
+      movies: [...this.state.movies, ...data.results],
+      currPage: newPage,
+    });
+  };
   async componentDidMount() {
+    //Side effects
     const res = await axios.get(
       `https://api.themoviedb.org/3/movie/popular?api_key=5540e483a20e0b20354dabc2d66a31c9&language=en-US&page=${this.state.currPage}`
     );
     let data = res.data;
+    // console.log(data);
     this.setState({
       movies: [...data.results],
     });
-    console.log(data);
+    let callbackfn = (entries) => {
+      if (entries[0].isIntersecting) {
+        this.loadMoreMovies();
+      }
+    };
+    let loader = document.querySelector(".infinite-loader");
+    let observer = new IntersectionObserver(callbackfn, { threshold: 1.0 });
+    observer.observe(loader);
   }
-
   changeMovies = async () => {
+    console.log("changemovies called");
+    console.log(this.state.currPage);
     const res = await axios.get(
       `https://api.themoviedb.org/3/movie/popular?api_key=5540e483a20e0b20354dabc2d66a31c9&language=en-US&page=${this.state.currPage}`
     );
     let data = res.data;
+    // console.log(data);
     this.setState({
       movies: [...data.results],
     });
   };
-
   handleRight = () => {
     let temparr = [];
     for (let i = 1; i <= this.state.parr.length + 1; i++) {
@@ -47,7 +68,6 @@ export default class Movies extends Component {
       this.changeMovies
     );
   };
-
   handleLeft = () => {
     if (this.state.currPage != 1) {
       this.setState(
@@ -58,9 +78,8 @@ export default class Movies extends Component {
       );
     }
   };
-
   handleClick = (value) => {
-    if (value !== this.state.currPage) {
+    if (value != this.state.currPage) {
       console.log("i am called");
       this.setState(
         {
@@ -70,37 +89,37 @@ export default class Movies extends Component {
       );
     }
   };
-
   handleFavourites = (movie) => {
     let oldData = JSON.parse(localStorage.getItem("movies-app") || "[]");
     if (this.state.favourites.includes(movie.id)) {
-      oldData = oldData.filter((m) => m.id !== movie.id);
+      oldData = oldData.filter((m) => m.id != movie.id);
     } else {
       oldData.push(movie);
     }
     localStorage.setItem("movies-app", JSON.stringify(oldData));
-    this.handleFavouritesStates();
+    console.log(oldData);
+    this.handleFavouritesState();
   };
-
-  handleFavouritesStates = () => {
+  handleFavouritesState = () => {
     let oldData = JSON.parse(localStorage.getItem("movies-app") || "[]");
     let temp = oldData.map((movie) => movie.id);
     this.setState({
       favourites: [...temp],
     });
   };
-
   render() {
-    // let movie = movies.results;
+    // let movie = movies.results
     return (
       <>
-        {this.state.movies === " " ? (
-          <div className="spinner-border" role="status">
-            <span className="visually-hidden">Loading...</span>
+        {this.state.movies.length == 0 ? (
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
           </div>
         ) : (
           <div>
-            <h3 className="text-center">Trending</h3>
+            <h3 className="text-center">
+              <strong>Trending</strong>
+            </h3>
             <div className="movies-list">
               {this.state.movies.map((movieObj) => (
                 <div
@@ -117,7 +136,7 @@ export default class Movies extends Component {
                   <h5 className="card-title movies-title">
                     {movieObj.original_title}
                   </h5>
-                  {/* <p className="card-text movies-text">{movieObj.overview} </p> */}
+                  {/* <p class="card-text movies-text">{movieObj.overview}</p> */}
                   <div
                     className="button-wrapper"
                     style={{
@@ -126,29 +145,35 @@ export default class Movies extends Component {
                       justifyContent: "center",
                     }}
                   >
-                    {this.state.hover === movieObj.id && (
-                      <button
+                    {this.state.hover == movieObj.id && (
+                      <a
                         className="btn btn-primary movies-button"
-                        type="button"
                         onClick={() => this.handleFavourites(movieObj)}
                       >
-                       {this.state.favourites.includes(movieObj.id)?"Remove from favourites":"Add to favourites"}
-                      </button>
+                        {this.state.favourites.includes(movieObj.id)
+                          ? "Remove from favourites"
+                          : "Add to favourites"}
+                      </a>
                     )}
                   </div>
                   {/* </div> */}
                 </div>
               ))}
             </div>
+            {/* <div
+              className="infinite-loader"
+              style={{ display: "flex", justifyContent: "center" }}
+            >
+              <h2>Load More Movies .........................</h2>
+            </div> */}
             <div style={{ display: "flex", justifyContent: "center" }}>
               <nav aria-label="Page navigation example">
-                <ul className="pagination">
-                  <li className="page-item" style={{ cursor: "pointer" }}>
-                    <button className="page-link" onClick={this.handleLeft}>
+                <ul class="pagination">
+                  <li class="page-item">
+                    <a class="page-link" onClick={this.handleLeft}>
                       Previous
-                    </button>
+                    </a>
                   </li>
-
                   {this.state.parr.map((value) => (
                     <li class="page-item">
                       <a
@@ -159,10 +184,10 @@ export default class Movies extends Component {
                       </a>
                     </li>
                   ))}
-                  <li className="page-item" style={{ cursor: "pointer" }}>
-                    <button className="page-link" onClick={this.handleRight}>
+                  <li class="page-item">
+                    <a class="page-link" onClick={this.handleRight}>
                       Next
-                    </button>
+                    </a>
                   </li>
                 </ul>
               </nav>
