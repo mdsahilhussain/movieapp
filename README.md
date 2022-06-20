@@ -12,26 +12,30 @@ In the journey of learning to react js, this is my first project named the Movie
 After making this application. I learned in-depth bootstrap, Lifecycle Methods, API calls, Windows Storage, Router, Adding, Deleting, Sorting, Searching, Filtering, and Pagination in React js.
 
 ## Core features manifested by is app 📚
- * Adding your Favorite movie form storage.
- * Removeing your Favorite movie form storage.
+ * Add your Favorite movie from storage.
+ * Removing your Favorite movie from storage.
  * Searching your specific movies
  * Sorting movies by rank, most view.
 
-## Technologies, libraries and frameworks: 
- Bootstrap: for building app responsiv.
+## Technologies, libraries, and frameworks
+
+ Bootstrap: for building app responsive.
+
+
 
  ⚛️ React js : for building user interface
+
  * Lifecycle methods in class components.
+
  * API calls thoroug axois.
+
  * windows Storage like localStorage, sessionStorage.
+
  * .map method, .filter method
 
- React Router Dom : for navigat one page to another page.
 
-### Dependencies 📝
- * React Router Dom
- * Bootstrap
- * Axois
+
+ React Router Dom: for navigating one page to another page.
 
 ### Installing 💻
  How download all dependencies
